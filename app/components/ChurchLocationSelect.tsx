@@ -241,6 +241,8 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             classNamePrefix="church-loc"
             menuPortalTarget={menuPortalTarget}
             menuPosition="fixed"
+            menuPlacement="auto"
+            maxMenuHeight={240}
             filterOption={(option, inputValue) => {
               const label = (option.data?.label ?? option.label ?? '') + '';
               const q = (inputValue ?? '').toLowerCase();
@@ -263,6 +265,8 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             classNamePrefix="church-loc"
             menuPortalTarget={menuPortalTarget}
             menuPosition="fixed"
+            menuPlacement="auto"
+            maxMenuHeight={240}
             filterOption={(option, inputValue) => {
               const label = (option.data?.label ?? option.label ?? '') + '';
               const q = (inputValue ?? '').toLowerCase();
@@ -294,7 +298,9 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
         classNamePrefix="church-loc"
         menuPortalTarget={menuPortalTarget}
         menuPosition="fixed"
-filterOption={(option, inputValue) => {
+        menuPlacement="auto"
+        maxMenuHeight={240}
+        filterOption={(option, inputValue) => {
               const label = (option.data?.label ?? option.label ?? '') + '';
               const q = (inputValue ?? '').toLowerCase();
               return !q || label.toLowerCase().includes(q);
