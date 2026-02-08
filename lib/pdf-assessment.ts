@@ -5,7 +5,7 @@ import type { SubmitAssessmentInput } from '@/app/actions/assessment';
 const FONT_SIZE = 10;
 const MARGIN = 14;
 
-export function downloadAssessmentPdf(data: SubmitAssessmentInput): void {
+function buildAssessmentPdfDoc(data: SubmitAssessmentInput): jsPDF {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   let y = MARGIN;
 
@@ -59,6 +59,35 @@ export function downloadAssessmentPdf(data: SubmitAssessmentInput): void {
   doc.setFontSize(8);
   doc.text(`Submitted on ${new Date().toLocaleString()}`, MARGIN, finalY + 8);
 
+  return doc;
+}
+
+function getPdfFilename(data: SubmitAssessmentInput): string {
   const safeName = data.associationName.replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').slice(0, 40);
-  doc.save(`Assessment_${safeName}_${Date.now()}.pdf`);
+  return `Assessment_${safeName}_${Date.now()}.pdf`;
+}
+
+/** Trigger download of the assessment PDF. May not work in in-app browsers (e.g. Messenger, Instagram). */
+export function downloadAssessmentPdf(data: SubmitAssessmentInput): void {
+  const doc = buildAssessmentPdfDoc(data);
+  const blob = doc.output('blob');
+  const url = URL.createObjectURL(blob);
+  const filename = getPdfFilename(data);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/** Open the assessment PDF in a new tab. Use when download fails (e.g. in Messenger or Instagram). */
+export function openAssessmentPdfInNewTab(data: SubmitAssessmentInput): void {
+  const doc = buildAssessmentPdfDoc(data);
+  const blob = doc.output('blob');
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank', 'noopener');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
 }

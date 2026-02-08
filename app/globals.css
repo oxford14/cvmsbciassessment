@@ -718,10 +718,17 @@ input[type="checkbox"] {
 }
 
 .success-dialog-download-prompt {
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.5rem;
   color: var(--text);
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.success-dialog-in-app-note {
+  margin: 0 0 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-light, #666);
+  line-height: 1.4;
 }
 
 .success-dialog-actions {
@@ -756,6 +763,17 @@ input[type="checkbox"] {
 }
 
 .success-dialog-btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.success-dialog-btn-secondary {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.success-dialog-btn-secondary:hover {
   background: var(--primary-dark);
   border-color: var(--primary-dark);
 }
@@ -1798,10 +1816,28 @@ input[type="checkbox"] {
     margin: 0;
   }
 
-  /* Location section */
+  /* Location section: stack each field on its own line on mobile */
   .mobile-location-section {
     padding-top: 0.75rem;
     border-top: 1px solid var(--border-color);
+  }
+
+  .mobile-location-section .church-location-two-row .church-location-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .mobile-location-section .church-location-two-row .church-location-row > *:first-child,
+  .mobile-location-section .church-location-two-row .church-location-row > *:nth-child(2),
+  .mobile-location-section .church-location-two-row .church-location-row .location-province-auto {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mobile-location-section .church-location-two-row .location-province-auto {
+    min-width: 0;
   }
 
   .mobile-location-title {
@@ -1811,6 +1847,12 @@ input[type="checkbox"] {
     text-transform: uppercase;
     letter-spacing: 0.4px;
     margin-bottom: 0.5rem;
+  }
+
+  /* Keyboard dodge: leave space when scrolling focused field into view on mobile */
+  .mobile-church-cards input,
+  .mobile-church-cards [class*="control"] {
+    scroll-margin-bottom: 280px;
   }
 
   /* Remarks */

@@ -4,7 +4,7 @@ import React, { useState, useCallback, Fragment, useEffect } from 'react';
 import { submitAssessment, type SubmitAssessmentInput } from '@/app/actions/assessment';
 import { ChurchLocationSelect, type ChurchLocationValue } from '@/app/components/ChurchLocationSelect';
 import { RegionSelect, type RegionValue } from '@/app/components/RegionSelect';
-import { downloadAssessmentPdf } from '@/lib/pdf-assessment';
+import { downloadAssessmentPdf, openAssessmentPdfInNewTab } from '@/lib/pdf-assessment';
 
 const emptyLocation: ChurchLocationValue = {
   regionCode: '',
@@ -29,7 +29,10 @@ type ChurchRow = {
   remarks: string;
 };
 
+const MOBILE_BREAKPOINT = 768;
+
 export function AssessmentForm() {
+  const formRef = React.useRef<HTMLFormElement>(null);
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [churchLocationErrorIds, setChurchLocationErrorIds] = useState<Set<number>>(new Set());
@@ -41,6 +44,26 @@ export function AssessmentForm() {
     { id: 1, name: '', pastorName: '', contactNumber: '', location: { ...emptyLocation }, ga2023: false, ga2024: false, ga2025: false, remarks: '' },
   ]);
   const [lastSubmittedData, setLastSubmittedData] = useState<SubmitAssessmentInput | null>(null);
+
+  /* Keyboard dodge on mobile: scroll focused field into view so keyboard doesn't cover it */
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    const media = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+    const handleFocusIn = (e: FocusEvent) => {
+      if (!media.matches) return;
+      const target = e.target as HTMLElement;
+      if (!target || !form.contains(target)) return;
+      const scrollTarget = target.closest('.mobile-field') ?? target.closest('[class*="church-location"]') ?? target;
+      if (scrollTarget && typeof (scrollTarget as HTMLElement).scrollIntoView === 'function') {
+        setTimeout(() => {
+          (scrollTarget as HTMLElement).scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }, 300);
+      }
+    };
+    form.addEventListener('focusin', handleFocusIn);
+    return () => form.removeEventListener('focusin', handleFocusIn);
+  }, []);
 
   const showAlert = useCallback((message: string, type: 'success' | 'error') => {
     setAlert({ type, message });
@@ -237,6 +260,7 @@ export function AssessmentForm() {
           <div className="success-dialog-modal" onClick={(e) => e.stopPropagation()}>
             <p id="success-dialog-title" className="success-dialog-message">{alert.message}</p>
             <p className="success-dialog-download-prompt">Do you want to download a copy of the submitted data or churches?</p>
+            <p className="success-dialog-in-app-note">If &quot;Download&quot; doesn&apos;t work (e.g. in Messenger or Instagram), use &quot;Open PDF&quot; or open this page in Chrome or Safari.</p>
             <div className="success-dialog-actions">
               <button
                 type="button"
@@ -248,6 +272,17 @@ export function AssessmentForm() {
                 }}
               >
                 Download copy
+              </button>
+              <button
+                type="button"
+                className="success-dialog-btn success-dialog-btn-secondary"
+                onClick={() => {
+                  if (lastSubmittedData) openAssessmentPdfInNewTab(lastSubmittedData);
+                  setAlert(null);
+                  setLastSubmittedData(null);
+                }}
+              >
+                Open PDF
               </button>
               <button type="button" className="success-dialog-btn" onClick={() => { setAlert(null); setLastSubmittedData(null); }}>
                 No thanks
@@ -262,7 +297,7 @@ export function AssessmentForm() {
         </div>
       )}
 
-      <form id="assessmentForm" onSubmit={handleSubmit}>
+      <form ref={formRef} id="assessmentForm" onSubmit={handleSubmit}>
         <div className="section-title">Association Information</div>
         <div className="form-row">
           <div className="form-group">
