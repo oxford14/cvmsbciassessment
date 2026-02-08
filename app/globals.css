@@ -99,6 +99,18 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.church-location-select,
+.church-location-compact {
+  min-width: 200px;
+}
+
+.church-location-compact .location-badge {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
 /* react-select overrides to match form theme */
 .address-select-grid .form-group [class*="control"] {
   min-height: 2.5rem;
@@ -167,6 +179,13 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(44, 95, 79, 0.1);
 }
 
+/* Remove focus effects from react-select's internal search input */
+[class*="-container"] input:focus {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 .instruction-box {
   background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
   border-left: 4px solid var(--accent);
@@ -177,11 +196,298 @@ select:focus {
   color: var(--text-dark);
 }
 
+/* Church cards */
+.churches-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.church-card {
+  background: var(--bg-cream);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.church-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(44, 95, 79, 0.08);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.church-card-title {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+.church-card-body {
+  padding: 1.25rem;
+}
+
+.church-address-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.church-address-label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.church-ga-remarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.church-ga-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.church-ga-checkboxes .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Church location inline (table row) */
+.church-location-inline {
+  display: inline-block;
+  min-width: 110px;
+  margin-right: 0.5rem;
+}
+
+.church-location-compact {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.church-location-compact > span {
+  min-width: 100px;
+  flex: 0 1 auto;
+}
+
+/* React-select menu in portal: ensure dropdown appears above table/overflow */
+.church-loc__menu {
+  z-index: 9999 !important;
+}
+
+.church-location-cell {
+  white-space: nowrap;
+}
+
+/* Church 2-row layout: row 2 compact and close to row 1 */
+.churches-row-2 td {
+  padding-top: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-top: none;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+/* Two-row location: City + Barangay + Province (auto) on one inline row */
+.church-location-two-row {
+  flex: 1; /* Take remaining space */
+  width: auto;
+}
+
+.church-location-two-row .church-location-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  align-items: center;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.church-location-two-row .church-location-row > *:first-child,
+.church-location-two-row .church-location-row > *:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+
+.church-location-two-row .church-location-row [class*="control"] {
+  min-width: 0;
+}
+
+.church-location-two-row .location-province-auto {
+  flex: 0 0 auto;
+  min-width: 120px;
+  padding: 0.5rem 0.75rem;
+  background: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  color: #555;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 4px;
+}
+
+.church-location-row {
+  background: rgba(44, 95, 79, 0.04);
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.9rem;
+}
+
+.church-location-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-right: 0.75rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+.church-location-select {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.churches-table-row td {
+  vertical-align: middle;
+}
+
+.churches-table-row input[type="text"],
+.churches-table-row input[type="tel"] {
+  min-width: 100px;
+}
+
+/* Church table with 2 rows per church: row1 = main fields, row2 = location */
+.church-table-two-row {
+  border-spacing: 0;
+  border-collapse: separate;
+  width: 100%;
+}
+
+.church-table-two-row thead th {
+  background: var(--primary);
+  color: white;
+  padding: 1rem 1rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 3px solid var(--accent);
+  white-space: nowrap;
+}
+
+.church-table-two-row thead th:last-child {
+  border-right: none;
+}
+
+.church-table-two-row thead th:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 0;
+}
+
+.church-table-two-row thead th:nth-last-child(2) {
+  /* Last visible header before the empty action column */
+}
+
+.church-table-two-row thead th:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 0;
+}
+
+/* First row of a church entry */
+.church-main-row td {
+  padding-top: 1.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-top: 1px solid var(--border-color);
+  background: white;
+}
+
+/* Second row (location) */
+.church-table-two-row .location-data-row td {
+  padding: 0.25rem 1rem 1.25rem 1rem;
+  vertical-align: middle;
+  border-bottom: none;
+  background: white;
+}
+
+/* Separator styling */
+.church-main-row td {
+  border-top: 8px solid #F2F0EB; /* Thick spacer color matching page bg/cream */
+}
+
+/* Remove border for the first item if we want it flush with header, 
+   but actually a gap after header is nice too. 
+   If we want header -> row connection, we might remove it. 
+   Let's keep it for consistency or make it thinner. */
+.church-main-row:first-of-type td {
+  border-top: none;
+}
+
+/* Hover effect on the group */
+.church-main-row:hover td,
+.church-main-row:hover + .location-data-row td {
+  background-color: #FAFBF9;
+}
+
+.location-row-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.location-row-label {
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--primary);
+  white-space: nowrap;
+  min-width: 60px;
+}
+
 .table-container {
   overflow-x: auto;
   margin: 2rem 0;
   border-radius: 8px;
   border: 1px solid var(--border-color);
+}
+
+/* Churches table: sticky header + vertical scroll when many churches */
+.churches-table-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.churches-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 table {
@@ -210,6 +516,12 @@ tr:hover {
   background: var(--bg-cream);
 }
 
+.add-church-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
 .add-church-btn {
   background: var(--accent);
   color: white;
@@ -220,7 +532,6 @@ tr:hover {
   font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.3s ease;
-  margin-bottom: 1rem;
 }
 
 .add-church-btn:hover {
@@ -305,6 +616,150 @@ input[type="checkbox"] {
   color: #7A2E2E;
 }
 
+/* Inline field errors */
+.form-group-error input {
+  border-color: var(--error) !important;
+}
+.field-error-message {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--error);
+  font-weight: 500;
+}
+
+/* Church row with incomplete location */
+.church-row-location-error .location-row-container,
+.church-row-location-error .mobile-location-section {
+  outline: 2px solid var(--error);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Tooltip-style field error (points to field like browser validation) */
+.location-select-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.field-error-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 0.875rem;
+  color: #1a1a1a;
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.field-error-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 1rem;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid white;
+  filter: drop-shadow(0 -1px 1px rgba(0, 0, 0, 0.08));
+}
+
+.field-error-tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  background: #f59e0b;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 4px;
+}
+
+/* Success dialog */
+.success-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  animation: overlayIn 0.2s ease;
+}
+
+.success-dialog-modal {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
+  padding: 1.5rem 1.5rem 1.25rem;
+  animation: modalIn 0.25s ease;
+  text-align: center;
+}
+
+.success-dialog-message {
+  margin: 0 0 0.75rem;
+  color: #2D5F3A;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.success-dialog-download-prompt {
+  margin: 0 0 1.25rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.success-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.success-dialog-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.6rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.success-dialog-btn:hover {
+  background: var(--border-color);
+}
+
+.success-dialog-btn-primary {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.success-dialog-btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
 /* Header */
 .header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -386,20 +841,36 @@ input[type="checkbox"] {
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0;
+  transition: width 0.3s ease, min-width 0.3s ease;
+  position: relative;
 }
 
 .admin-sidebar-header {
   padding: 0 1.5rem 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.25rem;
 }
 
 .admin-sidebar-logo {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   font-family: 'Crimson Pro', serif;
   font-weight: 700;
   font-size: 1.25rem;
   letter-spacing: 0.02em;
+}
+
+.admin-sidebar-logo svg,
+.admin-sidebar-logo-img {
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .admin-sidebar-title {
@@ -418,7 +889,9 @@ input[type="checkbox"] {
 }
 
 .admin-nav-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   padding: 0.75rem 1rem;
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
@@ -427,8 +900,17 @@ input[type="checkbox"] {
   transition: background 0.2s, color 0.2s;
 }
 
+.admin-nav-link svg {
+  flex-shrink: 0;
+}
+
 .admin-nav-link:hover {
   background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+.admin-nav-link.active {
+  background: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
@@ -437,14 +919,19 @@ input[type="checkbox"] {
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.admin-sidebar-footer .btn {
+.admin-sidebar-footer .btn,
+.admin-logout-btn {
   width: 100%;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 0.75rem;
   background: rgba(255, 255, 255, 0.15);
   color: white;
 }
 
-.admin-sidebar-footer .btn:hover {
+.admin-sidebar-footer .btn:hover,
+.admin-logout-btn:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
@@ -458,6 +945,130 @@ input[type="checkbox"] {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+/* Collapse button - PC only */
+.admin-sidebar-collapse-btn {
+  display: none;
+}
+
+/* Burger and overlay: hidden on desktop unless sidebar collapsed */
+@media (min-width: 769px) {
+  .admin-sidebar-collapse-btn {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    cursor: pointer;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+  }
+
+  .admin-sidebar-collapse-btn:hover {
+    background: #B07F52;
+  }
+
+  .admin-sidebar.collapsed {
+    width: 72px;
+    min-width: 72px;
+    padding: 1.5rem 0.5rem;
+  }
+
+  .admin-sidebar.collapsed .admin-nav-text {
+    overflow: hidden;
+    width: 0;
+    min-width: 0;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.2s ease, width 0.2s ease;
+  }
+
+  .admin-sidebar.collapsed .admin-sidebar-header {
+    padding: 0 0.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .admin-sidebar.collapsed .admin-sidebar-title {
+    display: none;
+  }
+
+  .admin-sidebar.collapsed .admin-sidebar-nav {
+    padding: 0 0.5rem;
+    align-items: center;
+  }
+
+  .admin-sidebar.collapsed .admin-nav-link {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .admin-sidebar.collapsed .admin-sidebar-footer {
+    padding: 1rem 0.5rem;
+  }
+
+  .admin-sidebar.collapsed .admin-logout-btn {
+    justify-content: center;
+  }
+
+  .admin-sidebar.collapsed .admin-sidebar-collapse-btn {
+    right: -12px;
+  }
+
+  .admin-burger-btn,
+  .admin-sidebar-overlay {
+    display: none !important;
+  }
+}
+
+.admin-burger-btn,
+.admin-sidebar-overlay {
+  display: none;
+}
+
+/* Burger base styles (shared for mobile and PC when collapsed) */
+.admin-burger-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1002;
+  width: 44px;
+  height: 44px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(26, 58, 46, 0.9);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.admin-burger-btn:hover {
+  background: var(--primary-dark);
+}
+
+.admin-burger-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: white;
+  border-radius: 1px;
 }
 
 /* Admin / stats */
@@ -613,6 +1224,21 @@ input[type="checkbox"] {
 .church-name {
   font-weight: 500;
   color: var(--primary);
+}
+
+.church-item-expanded {
+  grid-template-columns: 2.5fr 1fr 1fr 1fr 1.5fr;
+}
+
+.church-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.church-meta {
+  font-size: 0.8rem;
+  color: var(--text-light);
 }
 
 .year-badge {
@@ -829,6 +1455,72 @@ input[type="checkbox"] {
   white-space: nowrap;
 }
 
+/* Consolidated report pagination */
+.consolidated-report-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.report-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.report-toolbar-bottom {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+}
+
+.report-pagination-info {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.report-pagination-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.report-pagination-controls label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.page-size-select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--bg-white);
+}
+
+.page-indicator {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+.btn-sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+/* ── Mobile church cards (hidden on desktop) ── */
+.mobile-church-cards {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
@@ -866,35 +1558,263 @@ input[type="checkbox"] {
   .submission-detail-modal {
     max-height: none;
   }
-  .admin-layout {
+  /* Burger button - mobile only */
+  .admin-burger-btn {
+    display: flex;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1002;
+    width: 44px;
+    height: 44px;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(26, 58, 46, 0.9);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease, transform 0.2s ease;
   }
+
+  .admin-burger-btn:hover {
+    background: var(--primary-dark);
+  }
+
+  .admin-burger-btn span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: white;
+    border-radius: 1px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Sidebar overlay - mobile only */
+  .admin-sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .admin-sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Mobile: sidebar as slide-out drawer */
+  .admin-layout {
+    flex-direction: row;
+  }
+
   .admin-sidebar {
-    width: 100%;
-    min-width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85vw;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+    min-width: unset;
   }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+
   .admin-sidebar-header {
-    width: 100%;
-    padding: 0 0 1rem;
-    margin-bottom: 0;
+    padding: 4rem 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 1rem;
   }
+
   .admin-sidebar-nav {
-    flex: 1;
-    flex-direction: row;
-    padding: 0;
+    flex-direction: column;
+    padding: 0 0.75rem;
   }
+
   .admin-sidebar-footer {
-    border-top: none;
-    padding: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1rem 1.5rem;
   }
+
   .admin-sidebar-footer .btn {
-    width: auto;
+    width: 100%;
   }
   .admin-main-inner {
     padding: 1rem;
+  }
+
+  /* Hide table on mobile, show cards */
+  .desktop-church-table {
+    display: none !important;
+  }
+  .mobile-church-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  /* Individual church card */
+  .mobile-church-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.3s ease;
+  }
+
+  .mobile-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, rgba(44, 95, 79, 0.06) 0%, rgba(44, 95, 79, 0.02) 100%);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .mobile-card-number {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--primary);
+  }
+
+  .mobile-card-remove {
+    background: transparent;
+    color: var(--error);
+    border: 1.5px solid var(--error);
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  .mobile-card-remove:hover {
+    background: var(--error);
+    color: white;
+  }
+
+  .mobile-card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .mobile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .mobile-field-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .mobile-field input[type="text"],
+  .mobile-field input[type="tel"] {
+    width: 100%;
+    padding: 0.65rem 0.75rem !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: 6px !important;
+    font-size: 0.95rem;
+    background: var(--bg-cream);
+  }
+
+  .mobile-field input:focus {
+    border-color: var(--primary) !important;
+    background: white !important;
+    box-shadow: 0 0 0 3px rgba(44, 95, 79, 0.1) !important;
+  }
+
+  /* GA attendance section */
+  .mobile-ga-section {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .mobile-ga-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-ga-chips {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .mobile-ga-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--bg-cream);
+    padding: 0.45rem 0.85rem;
+    border-radius: 20px;
+    border: 1.5px solid var(--border-color);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .mobile-ga-chip.checked {
+    background: rgba(74, 124, 89, 0.1);
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .mobile-ga-chip input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+  }
+
+  /* Location section */
+  .mobile-location-section {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .mobile-location-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Remarks */
+  .mobile-remarks-field {
+    padding-top: 0.5rem;
   }
 }

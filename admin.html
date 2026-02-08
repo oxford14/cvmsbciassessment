@@ -60,6 +60,108 @@
             z-index: 1;
         }
 
+        /* Burger button - mobile only */
+        .burger-btn {
+            display: none;
+            position: fixed;
+            top: 1.25rem;
+            left: 1rem;
+            z-index: 1002;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .burger-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .burger-btn span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: white;
+            border-radius: 1px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .burger-btn.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .burger-btn.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-btn.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* Sidebar overlay & drawer - mobile only */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 85vw;
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-content {
+            padding: 4rem 1.5rem 2rem;
+        }
+
+        .sidebar-content .btn {
+            width: 100%;
+            margin-bottom: 0.75rem;
+            display: block;
+            text-align: center;
+        }
+
+        .sidebar-content .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar-content .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         .logo {
             display: inline-flex;
             align-items: center;
@@ -292,7 +394,7 @@
             border-radius: 6px;
             margin-bottom: 0.5rem;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+            grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1.5fr;
             gap: 1rem;
             align-items: center;
             font-size: 0.9rem;
@@ -325,6 +427,19 @@
         }
 
         @media (max-width: 768px) {
+            .burger-btn {
+                display: flex;
+            }
+
+            .sidebar-overlay,
+            .sidebar {
+                display: block;
+            }
+
+            .header-actions {
+                display: none;
+            }
+
             .container {
                 padding: 0 1rem;
             }
@@ -361,9 +476,36 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (min-width: 769px) {
+            .burger-btn,
+            .sidebar-overlay,
+            .sidebar {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Mobile burger button - hidden on PC -->
+    <button class="burger-btn" id="burgerBtn" aria-label="Open menu" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar overlay - mobile only -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar drawer - mobile only -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <h3 style="font-family: 'Crimson Pro', serif; margin-bottom: 1.5rem; font-size: 1.2rem;">Menu</h3>
+            <button class="btn btn-primary" onclick="exportData(); closeSidebar();">📥 Export to CSV</button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'; closeSidebar();">📋 Back to Form</button>
+        </div>
+    </aside>
+
     <div class="header">
         <div class="header-content">
             <div class="logo">
@@ -411,6 +553,23 @@
     </div>
 
     <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const burger = document.getElementById('burgerBtn');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            burger.classList.toggle('open');
+            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.getElementById('burgerBtn').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
         // Load submissions on page load
         window.onload = function() {
             loadSubmissions();
@@ -511,10 +670,12 @@
                     </div>
 
                     <div class="churches-list">
-                        <div class="info-label" style="margin-bottom: 0.75rem;">Churches Detail:</div>
+                        <div class="info-label" style="margin-bottom: 0.75rem;">Churches (Name • Pastor • Contact # • GA Years • Remarks):</div>
                         ${sub.churches.map(church => `
                             <div class="church-item">
                                 <div class="church-name">${church.name}</div>
+                                <div style="font-size: 0.85rem;">${church.pastorName || '—'}</div>
+                                <div style="font-size: 0.85rem;">${church.contactNumber || '—'}</div>
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                                     <span style="font-size: 0.75rem; color: var(--text-light);">2023:</span>
                                     <span class="year-badge ${church.ga2023 ? 'checked' : 'unchecked'}">${church.ga2023 ? '✓' : '✗'}</span>
@@ -558,7 +719,7 @@
                     return;
                 }
 
-                let csv = 'Association,Region,Address,Contact Person,Position,Phone Number,Email,Church Name,2023 GA,2024 GA,2025 GA,Remarks,Submitted Date\n';
+                let csv = 'Association,Region,Address,Contact Person,Position,Phone Number,Email,Church Name,Pastor Name,Contact #,2023 GA,2024 GA,2025 GA,Remarks,Submitted Date\n';
 
                 for (const key of keys.keys) {
                     try {
@@ -569,7 +730,7 @@
                             data.churches.forEach(church => {
                                 csv += `"${data.association}","${data.region}","${data.address}",`;
                                 csv += `"${data.contactPerson || ''}","${data.position || ''}","${data.phoneNumber || ''}","${data.email || ''}",`;
-                                csv += `"${church.name}",`;
+                                csv += `"${church.name}","${(church.pastorName || '').replace(/"/g, '""')}","${church.contactNumber || ''}",`;
                                 csv += `"${church.ga2023 ? 'Yes' : 'No'}","${church.ga2024 ? 'Yes' : 'No'}","${church.ga2025 ? 'Yes' : 'No'}",`;
                                 csv += `"${church.remarks || ''}","${new Date(data.submittedAt).toLocaleString()}"\n`;
                             });

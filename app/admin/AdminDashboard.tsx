@@ -42,6 +42,10 @@ function EyeIcon({ className }: { className?: string }) {
 type Church = {
   id: string;
   church_name: string;
+  pastor_name: string | null;
+  contact_number: string | null;
+  province_name: string | null;
+  municipality_name: string | null;
   ga_2023: boolean;
   ga_2024: boolean;
   ga_2025: boolean;
@@ -53,12 +57,6 @@ type Batch = {
   association_name: string;
   region_code: string | null;
   region_name: string | null;
-  province_code: string | null;
-  province_name: string | null;
-  municipality_code: string | null;
-  municipality_name: string | null;
-  barangay_code: string | null;
-  barangay_name: string | null;
   contact_person: string;
   position: string;
   phone_number: string;
@@ -86,12 +84,6 @@ function SubmissionDetailModal({ batch, onClose }: { batch: Batch; onClose: () =
             <span className="info-value">{batch.region_name ?? '—'}</span>
           </div>
           <div className="info-item">
-            <span className="info-label">Address</span>
-            <span className="info-value">
-              {[batch.region_name, batch.province_name, batch.municipality_name, batch.barangay_name].filter(Boolean).join(', ') || '—'}
-            </span>
-          </div>
-          <div className="info-item">
             <span className="info-label">Contact Person</span>
             <span className="info-value">{batch.contact_person}</span>
           </div>
@@ -115,8 +107,17 @@ function SubmissionDetailModal({ batch, onClose }: { batch: Batch; onClose: () =
         <div className="churches-list">
           <div className="info-label" style={{ marginBottom: '0.75rem' }}>Churches Detail:</div>
           {batch.assessment_churches.map((church) => (
-            <div key={church.id} className="church-item">
-              <div className="church-name">{church.church_name}</div>
+            <div key={church.id} className="church-item church-item-expanded">
+              <div className="church-item-main">
+                <div className="church-name">{church.church_name}</div>
+                <div className="church-meta">
+                  {church.pastor_name && <span>Pastor: {church.pastor_name}</span>}
+                  {church.contact_number && <span>Contact: {church.contact_number}</span>}
+                  {(church.province_name || church.municipality_name) && (
+                    <span>{church.municipality_name}{church.province_name ? `, ${church.province_name}` : ' (Independent City)'}</span>
+                  )}
+                </div>
+              </div>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-light)' }}>2023:</span>
                 <span className={`year-badge ${church.ga_2023 ? 'checked' : 'unchecked'}`}>{church.ga_2023 ? '✓' : '✗'}</span>
@@ -156,13 +157,17 @@ export function AdminDashboard({
     if (!search.trim()) return batches;
     const q = search.toLowerCase();
     return batches.filter((b) => {
-      const addressStr = [b.region_name, b.province_name, b.municipality_name, b.barangay_name].filter(Boolean).join(', ');
+      const churchMatch = b.assessment_churches.some(
+        (c) =>
+          c.church_name?.toLowerCase().includes(q) ||
+          c.province_name?.toLowerCase().includes(q) ||
+          c.municipality_name?.toLowerCase().includes(q)
+      );
       return (
         b.association_name.toLowerCase().includes(q) ||
         (b.region_name?.toLowerCase().includes(q)) ||
         b.contact_person.toLowerCase().includes(q) ||
-        addressStr.toLowerCase().includes(q) ||
-        b.assessment_churches.some((c) => c.church_name.toLowerCase().includes(q))
+        churchMatch
       );
     });
   }, [batches, search]);
@@ -197,9 +202,10 @@ export function AdminDashboard({
         <div className="search-box">
           <input
             type="text"
-            placeholder="Search by association, region, church name, or contact person..."
+            placeholder="Search by association, region, church name, or location..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value.toUpperCase())}
+            style={{ textTransform: 'uppercase' }}
           />
         </div>
 

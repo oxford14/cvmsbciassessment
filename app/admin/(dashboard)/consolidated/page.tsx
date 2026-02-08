@@ -19,7 +19,7 @@ export default async function ConsolidatedReportPage() {
     <div className="card">
       <div className="form-header">
         <h2>Consolidated Report</h2>
-        <p>All assessment data in one view. Export via Dashboard or use the table below.</p>
+        <p>All assessment data in one view. Use pagination and Export CSV below.</p>
       </div>
       <ConsolidatedReportTable rows={rows || []} />
     </div>

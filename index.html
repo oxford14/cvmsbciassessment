@@ -456,7 +456,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phoneNumber">Phone Number<span class="required">*</span></label>
-                        <input type="tel" id="phoneNumber" required placeholder="+63 XXX XXX XXXX">
+                        <input type="tel" id="phoneNumber" required placeholder="09XX XXX XXXX" maxlength="11" inputmode="numeric" pattern="[0-9]{11}" title="Enter exactly 11 digits">
                     </div>
 
                     <div class="form-group">
@@ -479,11 +479,13 @@
                     <table id="churchesTable">
                         <thead>
                             <tr>
-                                <th style="width: 30%;">Name of Churches</th>
-                                <th style="width: 15%; text-align: center;">2023 GA</th>
-                                <th style="width: 15%; text-align: center;">2024 GA</th>
-                                <th style="width: 15%; text-align: center;">2025 GA</th>
-                                <th style="width: 20%;">Remarks</th>
+                                <th style="width: 22%;">Name of Churches</th>
+                                <th style="width: 18%;">Pastor's Name</th>
+                                <th style="width: 12%;">Contact #</th>
+                                <th style="width: 10%; text-align: center;">2023 GA</th>
+                                <th style="width: 10%; text-align: center;">2024 GA</th>
+                                <th style="width: 10%; text-align: center;">2025 GA</th>
+                                <th style="width: 18%;">Remarks</th>
                                 <th style="width: 5%;"></th>
                             </tr>
                         </thead>
@@ -528,6 +530,8 @@
             row.className = 'church-row';
             row.innerHTML = `
                 <td><input type="text" name="churchName[]" placeholder="Enter church name" required style="width: 100%; border: 1px solid var(--border-color); padding: 0.5rem; border-radius: 4px;"></td>
+                <td><input type="text" name="pastorName[]" placeholder="Pastor's name" style="width: 100%; border: 1px solid var(--border-color); padding: 0.5rem; border-radius: 4px;"></td>
+                <td><input type="tel" name="churchContact[]" placeholder="09XX XXX XXXX" maxlength="11" inputmode="numeric" pattern="[0-9]{11}" style="width: 100%; border: 1px solid var(--border-color); padding: 0.5rem; border-radius: 4px;"></td>
                 <td class="checkbox-cell"><input type="checkbox" name="ga2023[]"></td>
                 <td class="checkbox-cell"><input type="checkbox" name="ga2024[]"></td>
                 <td class="checkbox-cell"><input type="checkbox" name="ga2025[]"></td>
@@ -535,6 +539,10 @@
                 <td><button type="button" class="remove-btn" onclick="removeChurchRow(this)">×</button></td>
             `;
             tbody.appendChild(row);
+            // Restrict church contact to 11 digits
+            row.querySelector('input[name="churchContact[]"]').addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '').slice(0, 11);
+            });
         }
 
         function removeChurchRow(btn) {
@@ -554,6 +562,10 @@
             }, 5000);
         }
 
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').slice(0, 11);
+        });
+
         document.getElementById('assessmentForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -563,19 +575,28 @@
                 ? document.getElementById('otherPosition').value 
                 : position;
 
+            const phoneRaw = document.getElementById('phoneNumber').value;
+            const phoneDigits = phoneRaw.replace(/\D/g, '');
+            if (phoneDigits.length !== 11) {
+                showAlert('Phone Number must be exactly 11 digits.', 'error');
+                return;
+            }
+
             const formData = {
                 association: document.getElementById('associationName').value,
                 region: document.getElementById('region').value,
                 address: document.getElementById('address').value,
                 contactPerson: document.getElementById('contactPerson').value,
                 position: positionValue,
-                phoneNumber: document.getElementById('phoneNumber').value,
+                phoneNumber: phoneDigits,
                 email: document.getElementById('email').value || '',
                 churches: [],
                 submittedAt: new Date().toISOString()
             };
 
             const churchNames = document.getElementsByName('churchName[]');
+            const pastorNames = document.getElementsByName('pastorName[]');
+            const churchContacts = document.getElementsByName('churchContact[]');
             const ga2023 = document.getElementsByName('ga2023[]');
             const ga2024 = document.getElementsByName('ga2024[]');
             const ga2025 = document.getElementsByName('ga2025[]');
@@ -583,8 +604,11 @@
 
             for (let i = 0; i < churchNames.length; i++) {
                 if (churchNames[i].value.trim()) {
+                    const contactRaw = churchContacts[i].value.replace(/\D/g, '');
                     formData.churches.push({
                         name: churchNames[i].value,
+                        pastorName: pastorNames[i].value.trim() || '',
+                        contactNumber: contactRaw,
                         ga2023: ga2023[i].checked,
                         ga2024: ga2024[i].checked,
                         ga2025: ga2025[i].checked,
