@@ -280,6 +280,16 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
 
   const provinceDisplay = value.provinceName || (value.municipalityCode ? 'Independent City' : '—');
 
+  const handleCityInputChange = useCallback((v: string) => {
+    if (v === '' && isMobile() && cityMenuOpen) return;
+    setCityInputValue(v ?? '');
+  }, [isMobile, cityMenuOpen]);
+
+  const handleBarangayInputChange = useCallback((v: string) => {
+    if (v === '' && isMobile() && barangayMenuOpen) return;
+    setBarangayInputValue(v ?? '');
+  }, [isMobile, barangayMenuOpen]);
+
   if (twoRow) {
     return (
       <div className="church-location-two-row">
@@ -292,7 +302,7 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             isLoading={cityLoading}
             placeholder="Search city or municipality..."
             inputValue={cityInputValue}
-            onInputChange={(v) => setCityInputValue(v ?? '')}
+            onInputChange={handleCityInputChange}
             noOptionsMessage={() =>
               cityLoading ? 'Loading...' : 'Type to search for a city or municipality'
             }
@@ -327,7 +337,7 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             isDisabled={!value.municipalityCode}
             placeholder={value.municipalityCode ? 'Select barangay...' : 'Select city first'}
             inputValue={barangayInputValue}
-            onInputChange={(v) => setBarangayInputValue(v ?? '')}
+            onInputChange={handleBarangayInputChange}
             noOptionsMessage={() =>
               barangayLoading ? 'Loading...' : value.municipalityCode ? 'Select barangay' : 'Select city first'
             }
