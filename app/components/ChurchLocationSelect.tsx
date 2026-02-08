@@ -61,10 +61,14 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
 
   const [cityMenuOpen, setCityMenuOpen] = useState(false);
   const [barangayMenuOpen, setBarangayMenuOpen] = useState(false);
+  const [cityInputValue, setCityInputValue] = useState('');
+  const [barangayInputValue, setBarangayInputValue] = useState('');
   const cityBlurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const barangayBlurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cityJustSelectedRef = useRef(false);
   const barangayJustSelectedRef = useRef(false);
+
+  const MOBILE_MENU_CLOSE_DELAY = 3000;
 
   const isMobile = useCallback(() =>
     typeof window !== 'undefined' && window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches,
@@ -73,12 +77,13 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
   const handleCityMenuClose = useCallback(() => {
     if (cityJustSelectedRef.current) {
       cityJustSelectedRef.current = false;
+      setCityInputValue('');
       setCityMenuOpen(false);
       return;
     }
     if (isMobile()) {
       if (cityBlurTimerRef.current) clearTimeout(cityBlurTimerRef.current);
-      cityBlurTimerRef.current = setTimeout(() => setCityMenuOpen(false), 400);
+      cityBlurTimerRef.current = setTimeout(() => setCityMenuOpen(false), MOBILE_MENU_CLOSE_DELAY);
     } else {
       setCityMenuOpen(false);
     }
@@ -87,12 +92,13 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
   const handleBarangayMenuClose = useCallback(() => {
     if (barangayJustSelectedRef.current) {
       barangayJustSelectedRef.current = false;
+      setBarangayInputValue('');
       setBarangayMenuOpen(false);
       return;
     }
     if (isMobile()) {
       if (barangayBlurTimerRef.current) clearTimeout(barangayBlurTimerRef.current);
-      barangayBlurTimerRef.current = setTimeout(() => setBarangayMenuOpen(false), 400);
+      barangayBlurTimerRef.current = setTimeout(() => setBarangayMenuOpen(false), MOBILE_MENU_CLOSE_DELAY);
     } else {
       setBarangayMenuOpen(false);
     }
@@ -102,6 +108,10 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
     if (cityBlurTimerRef.current) clearTimeout(cityBlurTimerRef.current);
     if (barangayBlurTimerRef.current) clearTimeout(barangayBlurTimerRef.current);
   }, []);
+
+  useEffect(() => {
+    setBarangayInputValue('');
+  }, [value.municipalityCode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -281,6 +291,8 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             isSearchable
             isLoading={cityLoading}
             placeholder="Search city or municipality..."
+            inputValue={cityInputValue}
+            onInputChange={(v) => setCityInputValue(v ?? '')}
             noOptionsMessage={() =>
               cityLoading ? 'Loading...' : 'Type to search for a city or municipality'
             }
@@ -314,6 +326,8 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             isLoading={barangayLoading}
             isDisabled={!value.municipalityCode}
             placeholder={value.municipalityCode ? 'Select barangay...' : 'Select city first'}
+            inputValue={barangayInputValue}
+            onInputChange={(v) => setBarangayInputValue(v ?? '')}
             noOptionsMessage={() =>
               barangayLoading ? 'Loading...' : value.municipalityCode ? 'Select barangay' : 'Select city first'
             }
@@ -356,6 +370,8 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
         isSearchable
         isLoading={cityLoading}
         placeholder="Search city or municipality..."
+        inputValue={cityInputValue}
+        onInputChange={(v) => setCityInputValue(v ?? '')}
         noOptionsMessage={() =>
           cityLoading ? 'Loading...' : 'Type to search for a city or municipality'
         }
