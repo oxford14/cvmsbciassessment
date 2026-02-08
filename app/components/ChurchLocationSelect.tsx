@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Select, { type SingleValue } from 'react-select';
+
+const MOBILE_BREAKPOINT = 768;
 
 const menuPortalTarget = typeof document !== 'undefined' ? document.body : undefined;
 
@@ -56,6 +58,50 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
   const [cityLoading, setCityLoading] = useState(true);
   const [barangayOptions, setBarangayOptions] = useState<BarangayOption[]>([]);
   const [barangayLoading, setBarangayLoading] = useState(false);
+
+  const [cityMenuOpen, setCityMenuOpen] = useState(false);
+  const [barangayMenuOpen, setBarangayMenuOpen] = useState(false);
+  const cityBlurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const barangayBlurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cityJustSelectedRef = useRef(false);
+  const barangayJustSelectedRef = useRef(false);
+
+  const isMobile = useCallback(() =>
+    typeof window !== 'undefined' && window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches,
+  []);
+
+  const handleCityMenuClose = useCallback(() => {
+    if (cityJustSelectedRef.current) {
+      cityJustSelectedRef.current = false;
+      setCityMenuOpen(false);
+      return;
+    }
+    if (isMobile()) {
+      if (cityBlurTimerRef.current) clearTimeout(cityBlurTimerRef.current);
+      cityBlurTimerRef.current = setTimeout(() => setCityMenuOpen(false), 400);
+    } else {
+      setCityMenuOpen(false);
+    }
+  }, [isMobile]);
+
+  const handleBarangayMenuClose = useCallback(() => {
+    if (barangayJustSelectedRef.current) {
+      barangayJustSelectedRef.current = false;
+      setBarangayMenuOpen(false);
+      return;
+    }
+    if (isMobile()) {
+      if (barangayBlurTimerRef.current) clearTimeout(barangayBlurTimerRef.current);
+      barangayBlurTimerRef.current = setTimeout(() => setBarangayMenuOpen(false), 400);
+    } else {
+      setBarangayMenuOpen(false);
+    }
+  }, [isMobile]);
+
+  useEffect(() => () => {
+    if (cityBlurTimerRef.current) clearTimeout(cityBlurTimerRef.current);
+    if (barangayBlurTimerRef.current) clearTimeout(barangayBlurTimerRef.current);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -153,6 +199,7 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
 
   const handleCityChange = (opt: SingleValue<CityOption>) => {
     if (!opt) return;
+    cityJustSelectedRef.current = true;
     onChange({
       ...value,
       regionCode: opt.regionCode,
@@ -171,6 +218,7 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
       onChange({ ...value, barangayCode: '', barangayName: '' });
       return;
     }
+    barangayJustSelectedRef.current = true;
     onChange({ ...value, barangayCode: opt.code, barangayName: opt.label.toUpperCase() });
   };
 
@@ -243,6 +291,15 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             menuPosition="fixed"
             menuPlacement="auto"
             maxMenuHeight={240}
+            menuIsOpen={cityMenuOpen}
+            onMenuOpen={() => {
+              if (cityBlurTimerRef.current) {
+                clearTimeout(cityBlurTimerRef.current);
+                cityBlurTimerRef.current = null;
+              }
+              setCityMenuOpen(true);
+            }}
+            onMenuClose={handleCityMenuClose}
             filterOption={(option, inputValue) => {
               const label = (option.data?.label ?? option.label ?? '') + '';
               const q = (inputValue ?? '').toLowerCase();
@@ -267,6 +324,15 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
             menuPosition="fixed"
             menuPlacement="auto"
             maxMenuHeight={240}
+            menuIsOpen={barangayMenuOpen}
+            onMenuOpen={() => {
+              if (barangayBlurTimerRef.current) {
+                clearTimeout(barangayBlurTimerRef.current);
+                barangayBlurTimerRef.current = null;
+              }
+              setBarangayMenuOpen(true);
+            }}
+            onMenuClose={handleBarangayMenuClose}
             filterOption={(option, inputValue) => {
               const label = (option.data?.label ?? option.label ?? '') + '';
               const q = (inputValue ?? '').toLowerCase();
@@ -300,6 +366,15 @@ export function ChurchLocationSelect({ value, onChange, compact, twoRow }: Churc
         menuPosition="fixed"
         menuPlacement="auto"
         maxMenuHeight={240}
+        menuIsOpen={cityMenuOpen}
+        onMenuOpen={() => {
+          if (cityBlurTimerRef.current) {
+            clearTimeout(cityBlurTimerRef.current);
+            cityBlurTimerRef.current = null;
+          }
+          setCityMenuOpen(true);
+        }}
+        onMenuClose={handleCityMenuClose}
         filterOption={(option, inputValue) => {
               const label = (option.data?.label ?? option.label ?? '') + '';
               const q = (inputValue ?? '').toLowerCase();
