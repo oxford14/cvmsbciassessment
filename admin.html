@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVMSBCI Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2C5F4F;
+            --primary-dark: #1a3a2e;
+            --accent: #C89968;
+            --bg-cream: #FAF8F5;
+            --bg-white: #FFFFFF;
+            --text-dark: #2A2A2A;
+            --text-light: #666666;
+            --border-color: #E0DDD8;
+            --success: #4A7C59;
+            --error: #B84C4C;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, var(--bg-cream) 0%, #F0EDE8 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 4px 20px rgba(44, 95, 79, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M10 10 L90 10 L50 90 Z" fill="rgba(255,255,255,0.03)" /></svg>');
+            opacity: 0.3;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-icon {
+            padding: 0 0.75rem;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h2 {
+            font-family: 'Crimson Pro', serif;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #B07F52;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(200, 153, 104, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, white 0%, var(--bg-cream) 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .search-box {
+            margin-bottom: 2rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Work Sans', sans-serif;
+            transition: all 0.3s ease;
+            background: var(--bg-cream);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 95, 79, 0.1);
+        }
+
+        .submission-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .submission-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .submission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .submission-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .submission-date {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .submission-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .churches-list {
+            margin-top: 1rem;
+        }
+
+        .church-item {
+            background: var(--bg-cream);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .church-name {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .year-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .year-badge.checked {
+            background: var(--success);
+            color: white;
+        }
+
+        .year-badge.unchecked {
+            background: #E0DDD8;
+            color: var(--text-light);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .church-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">CVMSBCI</div>
+                <span style="font-weight: 600;">Convention in Visayas and Mindanao of Southern Baptist Churches</span>
+            </div>
+            <h1>Admin Dashboard</h1>
+            <p class="subtitle">Convention in Visayas and Mindanao of Southern Baptist Churches, Inc. • Libby Road, Puan, Toril District, Davao City</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="admin-header">
+            <h2>Dashboard Overview</h2>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="exportData()">📥 Export to CSV</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">📋 Back to Form</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Submissions</div>
+                <div class="stat-value" id="totalSubmissions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Churches</div>
+                <div class="stat-value" id="totalChurches">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Associations</div>
+                <div class="stat-value" id="totalAssociations">0</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search by association, region, church name, or contact person..." onkeyup="filterSubmissions()">
+            </div>
+
+            <div id="submissionsList">
+                <!-- Submissions will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load submissions on page load
+        window.onload = function() {
+            loadSubmissions();
+        };
+
+        async function loadSubmissions() {
+            try {
+                const keys = await window.storage.list('submission_', true);
+                
+                if (!keys || !keys.keys || keys.keys.length === 0) {
+                    document.getElementById('submissionsList').innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No submissions yet.</p>';
+                    updateStats(0, 0, 0);
+                    return;
+                }
+
+                const submissions = [];
+                let totalChurches = 0;
+                const associations = new Set();
+
+                for (const key of keys.keys) {
+                    try {
+                        const result = await window.storage.get(key, true);
+                        if (result && result.value) {
+                            const data = JSON.parse(result.value);
+                            data._id = key;
+                            submissions.push(data);
+                            totalChurches += data.churches.length;
+                            associations.add(data.association);
+                        }
+                    } catch (error) {
+                        console.error('Error loading submission:', key, error);
+                    }
+                }
+
+                // Sort by date (newest first)
+                submissions.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+                updateStats(submissions.length, totalChurches, associations.size);
+                displaySubmissions(submissions);
+            } catch (error) {
+                console.error('Error loading submissions:', error);
+                document.getElementById('submissionsList').innerHTML = '<p style="text-align: center; color: var(--error); padding: 2rem;">Error loading submissions.</p>';
+            }
+        }
+
+        function updateStats(submissions, churches, associations) {
+            document.getElementById('totalSubmissions').textContent = submissions;
+            document.getElementById('totalChurches').textContent = churches;
+            document.getElementById('totalAssociations').textContent = associations;
+        }
+
+        function displaySubmissions(submissions) {
+            const container = document.getElementById('submissionsList');
+            
+            if (submissions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No submissions found.</p>';
+                return;
+            }
+
+            container.innerHTML = submissions.map(sub => `
+                <div class="submission-card" data-content="${JSON.stringify(sub).toLowerCase()}">
+                    <div class="submission-header">
+                        <div>
+                            <div class="submission-title">${sub.association}</div>
+                            <div class="submission-date">${new Date(sub.submittedAt).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="submission-info">
+                        <div class="info-item">
+                            <span class="info-label">Region</span>
+                            <span class="info-value">${sub.region}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Address</span>
+                            <span class="info-value">${sub.address}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Contact Person</span>
+                            <span class="info-value">${sub.contactPerson || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Position</span>
+                            <span class="info-value">${sub.position || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Phone Number</span>
+                            <span class="info-value">${sub.phoneNumber || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value">${sub.email || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Churches Reported</span>
+                            <span class="info-value">${sub.churches.length}</span>
+                        </div>
+                    </div>
+
+                    <div class="churches-list">
+                        <div class="info-label" style="margin-bottom: 0.75rem;">Churches Detail:</div>
+                        ${sub.churches.map(church => `
+                            <div class="church-item">
+                                <div class="church-name">${church.name}</div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--text-light);">2023:</span>
+                                    <span class="year-badge ${church.ga2023 ? 'checked' : 'unchecked'}">${church.ga2023 ? '✓' : '✗'}</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--text-light);">2024:</span>
+                                    <span class="year-badge ${church.ga2024 ? 'checked' : 'unchecked'}">${church.ga2024 ? '✓' : '✗'}</span>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--text-light);">2025:</span>
+                                    <span class="year-badge ${church.ga2025 ? 'checked' : 'unchecked'}">${church.ga2025 ? '✓' : '✗'}</span>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-light);">${church.remarks || 'No remarks'}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterSubmissions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.submission-card');
+            
+            cards.forEach(card => {
+                const content = card.getAttribute('data-content');
+                if (content.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        async function exportData() {
+            try {
+                const keys = await window.storage.list('submission_', true);
+                
+                if (!keys || !keys.keys || keys.keys.length === 0) {
+                    alert('No data to export.');
+                    return;
+                }
+
+                let csv = 'Association,Region,Address,Contact Person,Position,Phone Number,Email,Church Name,2023 GA,2024 GA,2025 GA,Remarks,Submitted Date\n';
+
+                for (const key of keys.keys) {
+                    try {
+                        const result = await window.storage.get(key, true);
+                        if (result && result.value) {
+                            const data = JSON.parse(result.value);
+                            
+                            data.churches.forEach(church => {
+                                csv += `"${data.association}","${data.region}","${data.address}",`;
+                                csv += `"${data.contactPerson || ''}","${data.position || ''}","${data.phoneNumber || ''}","${data.email || ''}",`;
+                                csv += `"${church.name}",`;
+                                csv += `"${church.ga2023 ? 'Yes' : 'No'}","${church.ga2024 ? 'Yes' : 'No'}","${church.ga2025 ? 'Yes' : 'No'}",`;
+                                csv += `"${church.remarks || ''}","${new Date(data.submittedAt).toLocaleString()}"\n`;
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error processing submission:', key, error);
+                    }
+                }
+
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `church-assessment-${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                alert('Data exported successfully!');
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Failed to export data. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
