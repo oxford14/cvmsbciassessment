@@ -1,14 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Select, { type SingleValue } from 'react-select';
 
-// Use same-origin proxy to avoid CORS when loading from psgc.cloud
-const PSGC_BASE = typeof window !== 'undefined' ? '/api/psgc' : 'https://psgc.cloud/api';
-
 type Option = { value: string; label: string; code: string };
-
-type PSGCItem = { code: string; name: string };
 
 export type RegionValue = {
   regionCode: string;
@@ -21,24 +15,12 @@ type RegionSelectProps = {
   required?: boolean;
 };
 
-function toOption(item: PSGCItem): Option {
-  return { value: item.code, label: item.name.trim(), code: item.code };
-}
+// Static list: I through XII (Roman numerals only, no other words)
+const ROMAN_REGIONS: Option[] = [
+  'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII',
+].map((r) => ({ value: r, label: r, code: r }));
 
 export function RegionSelect({ value, onChange, required }: RegionSelectProps) {
-  const [regions, setRegions] = useState<Option[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${PSGC_BASE}/regions`)
-      .then((r) => r.json())
-      .then((json) => {
-        const data: PSGCItem[] = Array.isArray(json) ? json : json.value ?? [];
-        setRegions(data.map(toOption));
-      })
-      .catch(() => setRegions([]))
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleChange = (opt: SingleValue<Option>) => {
     const code = opt?.code ?? '';
@@ -64,7 +46,7 @@ export function RegionSelect({ value, onChange, required }: RegionSelectProps) {
     singleValue: (base: any) => ({
       ...base,
       color: 'inherit',
-      background: 'transparent', // Ensure no background on the text itself
+      background: 'transparent',
     }),
   };
 
@@ -72,10 +54,10 @@ export function RegionSelect({ value, onChange, required }: RegionSelectProps) {
     <div className="form-group">
       <label>Region<span className="required">*</span></label>
       <Select<Option>
-        options={regions}
+        options={ROMAN_REGIONS}
         value={
           value.regionCode
-            ? regions.find((r) => r.code === value.regionCode) ?? {
+            ? ROMAN_REGIONS.find((r) => r.code === value.regionCode) ?? {
                 value: value.regionCode,
                 label: value.regionName,
                 code: value.regionCode,
@@ -84,9 +66,8 @@ export function RegionSelect({ value, onChange, required }: RegionSelectProps) {
         }
         onChange={handleChange}
         isSearchable
-        isLoading={loading}
         placeholder="Search region..."
-        noOptionsMessage={() => (loading ? 'Loading...' : 'No region found')}
+        noOptionsMessage={() => 'No region found'}
         styles={selectStyles}
         isClearable={false}
         required={required}
